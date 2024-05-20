@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/activity_horizontal_margin">
+
+    <!-- Заголовок -->
+    <TextView
+        android:id="@+id/hoursTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tuersday, 13.05.2023"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="@dimen/small_horizontal_margin"/>
+
+    <TextView
+        android:id="@+id/duration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="textEnd"
+        android:text="12 hours"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/hoursTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/small_horizontal_margin"/>
+    <!-- Поле Даты -->
+    <TextView
+        android:id="@+id/timeStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="6.30 am"
+        android:textSize="16sp"
+        android:paddingEnd="@dimen/small_horizontal_margin"
+        app:layout_constraintTop_toBottomOf="@id/hoursTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/small_horizontal_margin"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="textStart"
+        android:text="@string/entrance"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@id/hoursTitle"
+        app:layout_constraintStart_toEndOf="@id/timeStart"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/small_horizontal_margin"/>
+
+    <TextView
+        android:id="@+id/timeEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="6.30 pm"
+        android:textSize="16sp"
+        android:paddingEnd="@dimen/small_horizontal_margin"
+        app:layout_constraintTop_toBottomOf="@id/timeStart"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/small_horizontal_margin"/>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="textStart"
+        android:text="@string/exit"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@id/timeStart"
+        app:layout_constraintStart_toEndOf="@id/timeEnd"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/small_horizontal_margin"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
