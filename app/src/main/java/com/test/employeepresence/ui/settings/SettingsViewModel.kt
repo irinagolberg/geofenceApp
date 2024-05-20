@@ -23,12 +23,17 @@ class SettingsViewModel @Inject constructor(private val interactor: PlacesIntera
                 Log.d(APP_LOGTAG, "Place updated: $it")
                 it?.let {
                     _placeLiveData.value = it
-                    interactor.setupGeofence(it)
                 }
             }
         }
     }
 
+    fun addWorkingPlace(latitude: Double, longitude: Double) {
+        viewModelScope.launch {
+            interactor.addWorkingPlace(latitude, longitude)
+        }
+
+    }
     fun requestCurrentLocation() {
         viewModelScope.launch {
             interactor.requestCurrentLocation()

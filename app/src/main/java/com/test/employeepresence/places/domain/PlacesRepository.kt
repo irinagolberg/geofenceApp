@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 interface PlacesRepository {
     fun getPlacesFlow(): Flow<WorkingPlace?>
     suspend fun requestLocation()
+    fun addWorkingPlace(latitude: Double, longitude: Double)
 }

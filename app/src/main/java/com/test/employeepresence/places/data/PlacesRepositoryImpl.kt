@@ -8,6 +8,7 @@ import androidx.annotation.RequiresPermission
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.Tasks
+import com.test.employeepresence.hours.data.GeofenceHelper
 import com.test.employeepresence.places.domain.WorkingPlace
 import com.test.employeepresence.places.domain.PlacesRepository
 import com.test.employeepresence.utils.APP_LOGTAG
@@ -21,10 +22,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 class PlacesRepositoryImpl @Inject constructor(
     private val geocoder: Geocoder,
     private val fusedLocationProvider: FusedLocationProviderClient,
+    private val geofenceHelper: GeofenceHelper,
     private val placesDataSource: PlacesDataSource
 ) : PlacesRepository {
     private val repositoryScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -36,9 +37,6 @@ class PlacesRepositoryImpl @Inject constructor(
         repositoryScope.launch {
             placesDataSource.loadPlace()?.let { place ->
                 _placeFlow.emit(place)
-                place.address.isNullOrEmpty().run {
-                    getAddressFromLocation(place.latitude, place.longitude)
-                }
             }
         }
     }
@@ -51,9 +49,7 @@ class PlacesRepositoryImpl @Inject constructor(
                 fusedLocationProvider.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
             repositoryScope.launch {
                 Tasks.await(task)?.let { location ->
-                    val place = WorkingPlace(latitude = location.latitude, longitude = location.longitude, address = null)
-                    setPlace(place)
-                    getAddressFromLocation(location.latitude, location.longitude)
+                    addWorkingPlace(location.latitude, location.longitude)
                 }
             }
 
@@ -61,24 +57,23 @@ class PlacesRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun setPlace(place: WorkingPlace) {
+    @SuppressLint("MissingPermission")
+    override fun addWorkingPlace(latitude: Double, longitude: Double) {
+        repositoryScope.launch {
+            val address = geocoder.getFromLocation(latitude, longitude, 1)
+            val addressLine = address?.get(0)?.getAddressLine(0)
+            savePlace(WorkingPlace(latitude = latitude, longitude = longitude, address = addressLine))
+            Log.d(APP_LOGTAG, "addWorkingPlace $address")
+        }
+    }
+
+    private suspend fun savePlace(place: WorkingPlace) {
+        geofenceHelper.setupGeofence(place)
         placesDataSource.savePlace(place)
         _placeFlow.emit(place)
-
     }
 
     override fun getPlacesFlow(): Flow<WorkingPlace?> {
         return placeFlow
-    }
-
-    private suspend fun getAddressFromLocation(latitude: Double, longitude: Double) {
-        val address = geocoder.getFromLocation(latitude, longitude, 1)
-        address?.get(0)?.getAddressLine(0)?.let { addressLine ->
-            val place = placeFlow.value
-            if (place?.latitude == latitude && place.longitude == longitude) {
-                setPlace(place.copy(address = addressLine))
-            }
-        }
-        Log.d(APP_LOGTAG, "getAddressFromLocation $address")
     }
 }

@@ -1,7 +1,5 @@
 package com.test.employeepresence.di
 
-import com.test.employeepresence.hours.data.GeofenceSetupRepoImpl
-import com.test.employeepresence.hours.domain.GeofenceSetupRepo
 import com.test.employeepresence.places.data.PlacesDataSource
 import com.test.employeepresence.places.data.PlacesLocalDataSourceImpl
 import com.test.employeepresence.places.data.PlacesRepositoryImpl
@@ -20,12 +18,6 @@ abstract class PlacesRepoModule {
     abstract fun bindPlacesRepository(
         repo: PlacesRepositoryImpl
     ): PlacesRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindGeofenceSetupRepository(
-        repo: GeofenceSetupRepoImpl
-    ): GeofenceSetupRepo
 
     @Binds
     @Singleton

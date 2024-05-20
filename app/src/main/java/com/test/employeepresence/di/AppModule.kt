@@ -6,7 +6,6 @@ import androidx.room.Room
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.LocationServices
-import com.test.employeepresence.hours.domain.GeofenceSetupRepo
 import com.test.employeepresence.places.data.db.PlacesDao
 import com.test.employeepresence.places.data.db.PlacesDatabase
 import com.test.employeepresence.places.domain.PlacesInteractor
@@ -47,10 +46,9 @@ object AppModule {
 
     @Provides
     fun providePlacesInteractor(
-        placesRepo: PlacesRepository,
-        geofenceSetupRepo: GeofenceSetupRepo
+        placesRepo: PlacesRepository
     ): PlacesInteractor {
-        return PlacesInteractor(placesRepo, geofenceSetupRepo)
+        return PlacesInteractor(placesRepo)
     }
 
     @Provides

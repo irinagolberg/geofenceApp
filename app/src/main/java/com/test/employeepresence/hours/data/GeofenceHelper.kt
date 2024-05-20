@@ -13,7 +13,6 @@ import com.test.employeepresence.hours.GeoFenceCreatorService
 import com.test.employeepresence.places.domain.WorkingPlace
 import com.test.employeepresence.utils.APP_LOGTAG
 import com.test.employeepresence.utils.GEOFENCE_RADIUS_IN_METERS
-import com.test.employeepresence.hours.domain.GeofenceSetupRepo
 import com.test.employeepresence.utils.GEOFENCE_ID
 import com.test.employeepresence.utils.GEOFENCE_REQUEST_CODE
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -22,16 +21,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class GeofenceSetupRepoImpl @Inject constructor(
+@Singleton
+class GeofenceHelper @Inject constructor(
     @ApplicationContext val context: Context
-): GeofenceSetupRepo {
+) {
     @Inject
     lateinit var geofencingClient: GeofencingClient
-    private val repositoryScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     @SuppressLint("MissingPermission")
-    override fun setupGeofence(place: WorkingPlace) {
+    fun setupGeofence(place: WorkingPlace) {
         Log.d(APP_LOGTAG, "handlePlaceUpdate $place")
         val geoFence = Geofence.Builder().
             setCircularRegion(
@@ -40,7 +41,7 @@ class GeofenceSetupRepoImpl @Inject constructor(
                 GEOFENCE_RADIUS_IN_METERS
             )
             .setRequestId(GEOFENCE_ID)
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT or Geofence.GEOFENCE_TRANSITION_DWELL)
+            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
             .setExpirationDuration(Geofence.NEVER_EXPIRE)
             .setLoiteringDelay(5000)
             .build()
@@ -50,7 +51,7 @@ class GeofenceSetupRepoImpl @Inject constructor(
             addGeofences(listOf(geoFence))
         }.build()
 
-        repositoryScope.launch {
+        scope.launch {
             geofencingClient.removeGeofences(listOf(GEOFENCE_ID)).run {
                 addOnSuccessListener {
                     Log.d(APP_LOGTAG, "Geofence removed")

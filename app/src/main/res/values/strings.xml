@@ -3,10 +3,13 @@
     <string name="title_hours">Hours</string>
     <string name="title_statistics">Stats</string>
     <string name="title_settings">Settings</string>
-    <string name="btn_get_location">Set Current Location</string>
+    <string name="current_location">Current Location</string>
+    <string name="btn_current_location">Use Current Location</string>
     <string name="lbl_your_place">Your place</string>
     <string name="lbl_address">Your place: </string>
-    <string name="empty">No address found</string>
+    <string name="lbl_geofence">Your working place</string>
+    <string name="lbl_description">Tap on a map to choose your working place</string>
+    <string name="empty">No working place yet</string>
     <string name="location_permission_rationale">It is necessary to access your location to show your presence</string>
     <string name="entrance">Entrance</string>
     <string name="exit">Exit</string>

@@ -22,19 +22,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
-    private val locationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val notGranted = permissions.filter { !it.value }
-
-        if (notGranted.isNotEmpty()) {
-            Log.d(APP_LOGTAG, "Location permissions not granted $notGranted")
-            processPermissions(false)
-        } else {
-            processPermissions(true)
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -59,51 +46,67 @@ class MainActivity : AppCompatActivity() {
         super.onNewIntent(intent)
         Toast.makeText(this, "${intent.action}", Toast.LENGTH_SHORT).show()
     }
+
     override fun onStart() {
         super.onStart()
         requestLocationPermissions()
     }
+
     private fun requestLocationPermissions() {
         val notPermissionGranted = LocationPermissionChecker.check(this)
         Log.d(APP_LOGTAG, "requestLocationPermissions: ${notPermissionGranted.toList()}")
-
-        if (notPermissionGranted.isNotEmpty()) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, notPermissionGranted.first())) {
+        notPermissionGranted.firstOrNull()?.let { permission ->
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    notPermissionGranted.first()
+                )
+            ) {
                 AlertDialog.Builder(this)
                     .setTitle(getString(R.string.app_name))
                     .setMessage(R.string.location_permission_rationale)
                     .setCancelable(false)
                     .setPositiveButton(getString(android.R.string.ok)) { _, _ ->
                         // Requesting foreground location permission
-                        locationPermissionLauncher.launch(
-                            arrayOf(notPermissionGranted.first())
-                        )
+                        requestLocationPermission(permission)
                     }
                     .setNegativeButton(android.R.string.cancel) { _, _ ->
-                        processPermissions(false)
+                        processPermissions()
                     }
                     .show()
-                return
             } else {
                 // Requesting location permission
-                locationPermissionLauncher.launch(
-                    arrayOf(notPermissionGranted.first())
-                )
+                requestLocationPermission(permission)
             }
-        } else {
-            processPermissions(true)
-        }
+        } ?: processPermissions()
 
     }
 
-    private fun processPermissions(granted: Boolean) {
-        when (granted) {
-            true -> {
-                binding.container.visibility = android.view.View.VISIBLE
-            }
-            false -> {
-                binding.container.visibility = android.view.View.GONE
+    private fun requestLocationPermission(permission: String) {
+        ActivityCompat.requestPermissions(this, arrayOf(permission), REQUEST_LOCATION_PERMISSIONS)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_LOCATION_PERMISSIONS) {
+            processPermissions()
+        }
+    }
+
+    private fun processPermissions() {
+        binding.container.visibility = if (LocationPermissionChecker.check(this).isEmpty()) {
+            android.view.View.VISIBLE
+        } else {
+            android.view.View.GONE.also {
+                requestLocationPermissions()
             }
         }
+    }
+
+    companion object {
+        const val REQUEST_LOCATION_PERMISSIONS = 10005
     }
 }

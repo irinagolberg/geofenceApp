@@ -29,7 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class SettingsFragment : Fragment(), OnMapReadyCallback {
     companion object {
-        private const val DEFAULT_ZOOM = 15
+        private const val DEFAULT_ZOOM = 17
         private val DEFAULT_LOCATION = LatLng(32.0730747, 34.7926483)
     }
     private var marker: Marker? = null
@@ -41,7 +41,7 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private lateinit var map: GoogleMap
+    private var map: GoogleMap? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,48 +73,44 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
 
     @SuppressLint("MissingPermission")
     private fun updateUI(workingPlace: WorkingPlace) {
-        if (!::map.isInitialized) {
-            // Переменная map не была инициализирована
-            return
-        }
         Log.d(APP_LOGTAG, "showOnMap $workingPlace")
+        addMarker(LatLng(workingPlace.latitude, workingPlace.longitude), workingPlace.address)
 
-        val latLng = LatLng(workingPlace.latitude, workingPlace.longitude)
-        marker?.remove()
-        geoFenceZone?.remove()
-        map.isMyLocationEnabled = true
-
-        marker = map.addMarker(
-            MarkerOptions()
-                .position(latLng)
-                .title(getString(R.string.lbl_your_place)).snippet(workingPlace.address ?: "")
-                .visible(true)
-        ).also {
-            it?.showInfoWindow()
-            geoFenceZone = map.addCircle(
-                CircleOptions()
-                    .center(latLng)
-                    .radius(GEOFENCE_RADIUS_IN_METERS.toDouble())
-            )
-        }
-        setCameraPosition(latLng)
-
+        geoFenceZone = map?.addCircle(
+            CircleOptions()
+                .center(LatLng(workingPlace.latitude, workingPlace.longitude))
+                .radius(GEOFENCE_RADIUS_IN_METERS.toDouble())
+        )
         binding.textViewAddress.text = workingPlace.address ?: getString(R.string.empty)
     }
 
+    @SuppressLint("MissingPermission")
+    private fun addMarker(latLng: LatLng, label: String?) {
+        marker?.remove()
+        geoFenceZone?.remove()
+        geoFenceZone = null
+
+        marker = map?.addMarker(
+            MarkerOptions()
+                .position(latLng)
+                .title(getString(R.string.lbl_your_place)).snippet(label ?: "")
+                .visible(true)
+        )
+
+        setCameraPosition(latLng)
+    }
+
+    @SuppressLint("MissingPermission")
     private fun getCurrentLocation() {
         if (LocationPermissionChecker.check(requireActivity()).isNotEmpty()) {
-            Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
-            return
+            map?.uiSettings?.isMyLocationButtonEnabled = false
+        } else {
+            viewModel.requestCurrentLocation()
         }
-        viewModel.requestCurrentLocation()
     }
 
     private fun setCameraPosition(latLng: LatLng) {
-        if (!::map.isInitialized) {
-            return
-        }
-        map.moveCamera(
+        map?.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
                 latLng, DEFAULT_ZOOM.toFloat()))
     }
@@ -123,8 +119,18 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
         _binding = null
     }
 
+    @SuppressLint("MissingPermission")
     override fun onMapReady(map: GoogleMap) {
         this.map = map
+        map.setOnMapClickListener {
+            addMarker(it, null)
+            viewModel.addWorkingPlace(it.latitude, it.longitude)
+        }
+        if (LocationPermissionChecker.check(requireActivity()).isNotEmpty()) {
+            map.uiSettings.isMyLocationButtonEnabled = false
+        } else {
+            map.isMyLocationEnabled = true
+        }
         Log.d(APP_LOGTAG, "onMapReady $map")
         setCameraPosition(DEFAULT_LOCATION)
         viewModel.placeLiveData.value?.let { updateUI(it) }
