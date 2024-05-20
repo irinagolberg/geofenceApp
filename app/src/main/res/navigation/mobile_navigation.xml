@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_hours">
+
+    <fragment
+        android:id="@+id/navigation_hours"
+        android:name="com.test.employeepresence.ui.hours.HoursFragment"
+        android:label="@string/title_hours"
+        tools:layout="@layout/fragment_hours" />
+
+    <fragment
+        android:id="@+id/navigation_stats"
+        android:name="com.test.employeepresence.ui.statistics.StatisticsFragment"
+        android:label="@string/title_statistics"
+        tools:layout="@layout/fragment_stats" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.test.employeepresence.ui.settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings" />
+</navigation>
