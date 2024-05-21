@@ -14,4 +14,7 @@
     <string name="entrance">Entrance</string>
     <string name="exit">Exit</string>
     <string name="no_hours">No data</string>
+    <string name="channel_description">Notifications for employee presence</string>
+    <string name="msg_check_in">Check in</string>
+    <string name="msg_check_out">Check out</string>
 </resources>

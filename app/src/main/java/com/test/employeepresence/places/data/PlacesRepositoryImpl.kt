@@ -8,7 +8,7 @@ import androidx.annotation.RequiresPermission
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.Tasks
-import com.test.employeepresence.hours.data.GeofenceHelper
+import com.test.employeepresence.hours.geofence.GeofenceHelper
 import com.test.employeepresence.places.domain.PlacesRepository
 import com.test.employeepresence.places.domain.WorkingPlace
 import com.test.employeepresence.utils.APP_LOGTAG

@@ -1,18 +1,15 @@
 package com.test.employeepresence.hours.data
 
-import android.content.SharedPreferences
 import android.util.Log
 import com.test.employeepresence.hours.domain.HoursRecord
 import com.test.employeepresence.hours.domain.HoursRecordType
 import com.test.employeepresence.hours.domain.HoursRepository
 import com.test.employeepresence.places.data.PlacesDataSource
-import com.test.employeepresence.places.domain.PlacesRepository
 import com.test.employeepresence.utils.APP_LOGTAG
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
 
@@ -25,7 +22,7 @@ class HoursRepositoryImpl @Inject constructor(
         repositoryScope.launch {
             val record = placesDataSource.loadPlace()?.let { place ->
                 HoursRecord(
-                    date = Calendar.getInstance().time, type =
+                    date = Date(), type =
                     when (entering) {
                         true -> HoursRecordType.ENTER
                         false -> HoursRecordType.EXIT

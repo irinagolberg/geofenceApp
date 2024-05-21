@@ -1,4 +1,4 @@
-package com.test.employeepresence.hours.data
+package com.test.employeepresence.hours.geofence
 
 import android.annotation.SuppressLint
 import android.app.PendingIntent
@@ -9,11 +9,11 @@ import android.util.Log
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingRequest
-import com.test.employeepresence.hours.GeoFenceCreatorService
 import com.test.employeepresence.places.domain.WorkingPlace
 import com.test.employeepresence.utils.APP_LOGTAG
 import com.test.employeepresence.utils.GEOFENCE_RADIUS_IN_METERS
 import com.test.employeepresence.utils.GEOFENCE_ID
+import com.test.employeepresence.utils.GEOFENCE_PLACE_EXTRA
 import com.test.employeepresence.utils.GEOFENCE_REQUEST_CODE
 import com.test.employeepresence.utils.LOITERING_DELAY
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -35,12 +35,11 @@ class GeofenceHelper @Inject constructor(
     @SuppressLint("MissingPermission")
     fun setupGeofence(place: WorkingPlace) {
         Log.d(APP_LOGTAG, "handlePlaceUpdate $place")
-        val geoFence = Geofence.Builder().
-            setCircularRegion(
-                place.latitude,
-                place.longitude,
-                GEOFENCE_RADIUS_IN_METERS
-            )
+        val geoFence = Geofence.Builder().setCircularRegion(
+            place.latitude,
+            place.longitude,
+            GEOFENCE_RADIUS_IN_METERS
+        )
             .setRequestId(GEOFENCE_ID)
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
             .setExpirationDuration(Geofence.NEVER_EXPIRE)
@@ -59,9 +58,9 @@ class GeofenceHelper @Inject constructor(
                 }
                 addOnFailureListener {
                     Log.d(APP_LOGTAG, "Geofence removing failed $it")
-            }
                 }
-            geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent).run {
+            }
+            geofencingClient.addGeofences(geofencingRequest, getPendingIntent(place)).run {
                 addOnSuccessListener {
                     Log.d(APP_LOGTAG, "Geofence added")
                 }
@@ -72,17 +71,17 @@ class GeofenceHelper @Inject constructor(
         }
     }
 
-    private val geofencePendingIntent: PendingIntent by lazy {
-        val intent = Intent(context, GeoFenceCreatorService::class.java)
-
-        PendingIntent.getService(
+    private fun getPendingIntent(place: WorkingPlace): PendingIntent {
+        val intent = Intent(context, GeofenceReciever::class.java)
+        intent.putExtra(GEOFENCE_PLACE_EXTRA, place.address)
+        return PendingIntent.getService(
             context,
             GEOFENCE_REQUEST_CODE,
             intent,
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-                PendingIntent.FLAG_CANCEL_CURRENT
+                PendingIntent.FLAG_UPDATE_CURRENT
             } else {
-                PendingIntent.FLAG_MUTABLE
+                PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             }
         )
     }

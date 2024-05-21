@@ -18,6 +18,7 @@ object LocationPermissionChecker {
             }
 
             permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+            permissions.add(Manifest.permission.POST_NOTIFICATIONS)
 
             return permissions.toTypedArray()
     }

@@ -7,6 +7,8 @@
     <!-- Required only when requesting background location access on
        Android 10 (API level 29) and higher. -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" android:minSdkVersion="29"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:name=".EmployeePresenceApp"
         android:allowBackup="true"
@@ -28,10 +30,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
-        <receiver
-            android:name=".hours.GeofenceBroadcastReceiver"
-            android:enabled="true"
-            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -44,7 +42,7 @@
         </activity>
 
         <service
-            android:name=".hours.GeoFenceCreatorService"
+            android:name=".hours.geofence.GeofenceReciever"
             android:exported="false" />
 
         <provider

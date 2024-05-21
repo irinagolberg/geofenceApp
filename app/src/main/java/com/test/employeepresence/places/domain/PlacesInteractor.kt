@@ -4,6 +4,7 @@ import javax.inject.Inject
 
 class PlacesInteractor @Inject constructor(private val placesRepo: PlacesRepository) {
     val placesFlow = placesRepo.getPlacesFlow()
+
     suspend fun requestCurrentLocation() {
         placesRepo.requestLocation()
     }
