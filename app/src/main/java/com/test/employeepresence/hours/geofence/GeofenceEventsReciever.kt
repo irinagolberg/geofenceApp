@@ -26,7 +26,7 @@ class GeofenceEventsReciever : LifecycleService() {
     lateinit var notificationHelper: NotificationHelper
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val result = super.onStartCommand(intent, flags, startId)
+        super.onStartCommand(intent, flags, startId)
 
         // If intent has the extra to stop the service
         if (intent?.getBooleanExtra(EXTRA_STOP_SERVICE, false) == true) {
@@ -41,39 +41,39 @@ class GeofenceEventsReciever : LifecycleService() {
                     .getStatusCodeString(it)
                 Log.e(APP_LOGTAG, "Geofence event error: $it")
             }
-            return result
-        }
-        Log.d(APP_LOGTAG, "Geofence receiver $geofencingEvent")
-        // Get the transition type.
-        val geofenceTransition = geofencingEvent.geofenceTransition
-
-        // Test that the reported transition was of interest.
-        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
-            geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT
-        ) {
-
-            // Get the geofences that were triggered. A single event can trigger
-            // multiple geofences.
-            val triggeringGeofences = geofencingEvent.triggeringGeofences
-
-            Log.i(APP_LOGTAG, "Geofence triggered: $triggeringGeofences")
-
-            val latitude = geofencingEvent.triggeringLocation?.latitude
-            val longitude = geofencingEvent.triggeringLocation?.longitude
-            if (latitude != null && longitude != null) {
-                sendNotification(placeName, geofenceTransition)
-                lifecycleScope.launch {
-                    hoursInteractor.saveHours(
-                        latitude, longitude,
-                        geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER
-                    )
-                }
-            }
         } else {
-            // Log the error.
-            Log.e(APP_LOGTAG, "Invalid transition type $geofenceTransition")
+            Log.d(APP_LOGTAG, "Geofence receiver $geofencingEvent")
+            // Get the transition type.
+            val geofenceTransition = geofencingEvent.geofenceTransition
+
+            // Test that the reported transition was of interest.
+            if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
+                geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT
+            ) {
+
+                // Get the geofences that were triggered. A single event can trigger
+                // multiple geofences.
+                val triggeringGeofences = geofencingEvent.triggeringGeofences
+
+                Log.i(APP_LOGTAG, "Geofence triggered: $triggeringGeofences")
+
+                val latitude = geofencingEvent.triggeringLocation?.latitude
+                val longitude = geofencingEvent.triggeringLocation?.longitude
+                if (latitude != null && longitude != null) {
+                    sendNotification(placeName, geofenceTransition)
+                    lifecycleScope.launch {
+                        hoursInteractor.saveHours(
+                            latitude, longitude,
+                            geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER
+                        )
+                    }
+                }
+            } else {
+                // Log the error.
+                Log.e(APP_LOGTAG, "Invalid transition type $geofenceTransition")
+            }
         }
-        return result
+        return START_STICKY
     }
 
     private fun sendNotification(placeName: String, transitionType: Int) {
@@ -82,7 +82,6 @@ class GeofenceEventsReciever : LifecycleService() {
         when (transitionType) {
             Geofence.GEOFENCE_TRANSITION_ENTER -> {
                 val checkIn = getString(R.string.msg_check_in)
-                Toast.makeText(this, checkIn, Toast.LENGTH_SHORT).show()
                 notificationHelper.sendNotification(
                     checkIn,
                     placeName,
@@ -92,7 +91,6 @@ class GeofenceEventsReciever : LifecycleService() {
 
             Geofence.GEOFENCE_TRANSITION_EXIT -> {
                 val checkOut = getString(R.string.msg_check_out)
-                Toast.makeText(this, checkOut, Toast.LENGTH_SHORT).show()
                 notificationHelper.sendNotification(
                     checkOut,
                     placeName,
