@@ -31,6 +31,7 @@ class GeofenceHelper @Inject constructor(
     @Inject
     lateinit var geofencingClient: GeofencingClient
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private var pendingIntent: PendingIntent? = null
 
     @SuppressLint("MissingPermission")
     fun setupGeofence(place: WorkingPlace) {
@@ -60,7 +61,9 @@ class GeofenceHelper @Inject constructor(
                     Log.d(APP_LOGTAG, "Geofence removing failed $it")
                 }
             }
-            geofencingClient.addGeofences(geofencingRequest, getPendingIntent(place)).run {
+
+            pendingIntent = getPendingIntent(place)
+            geofencingClient.addGeofences(geofencingRequest, pendingIntent!!).run {
                 addOnSuccessListener {
                     Log.d(APP_LOGTAG, "Geofence added")
                 }
@@ -72,16 +75,16 @@ class GeofenceHelper @Inject constructor(
     }
 
     private fun getPendingIntent(place: WorkingPlace): PendingIntent {
-        val intent = Intent(context, GeofenceReciever::class.java)
+        val intent = Intent(context, GeofenceEventsReciever::class.java)
         intent.putExtra(GEOFENCE_PLACE_EXTRA, place.address)
         return PendingIntent.getService(
             context,
-            GEOFENCE_REQUEST_CODE,
+            place.hashCode(),
             intent,
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_CANCEL_CURRENT
             } else {
-                PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_MUTABLE
             }
         )
     }

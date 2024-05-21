@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class GeofenceReciever : LifecycleService() {
+class GeofenceEventsReciever : LifecycleService() {
     @Inject
     lateinit var hoursInteractor: HoursInteractor
 
@@ -61,9 +61,8 @@ class GeofenceReciever : LifecycleService() {
             val latitude = geofencingEvent.triggeringLocation?.latitude
             val longitude = geofencingEvent.triggeringLocation?.longitude
             if (latitude != null && longitude != null) {
+                sendNotification(placeName, geofenceTransition)
                 lifecycleScope.launch {
-                    sendNotification(placeName, geofenceTransition)
-
                     hoursInteractor.saveHours(
                         latitude, longitude,
                         geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER

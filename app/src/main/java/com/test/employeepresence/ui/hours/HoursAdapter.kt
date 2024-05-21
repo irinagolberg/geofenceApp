@@ -10,7 +10,6 @@ import com.test.employeepresence.databinding.LayoutHoursItemBinding
 import com.test.employeepresence.hours.domain.DayRecord
 import com.test.employeepresence.utils.APP_LOGTAG
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Calendar
 import java.util.Date
@@ -19,7 +18,7 @@ import java.util.Locale
 class HoursAdapter : RecyclerView.Adapter<HoursAdapter.ViewHolder>() {
     companion object {
         val TITLE_DATE_FORMAT = SimpleDateFormat("EEEE, dd.MM.yyyy", Locale.getDefault())
-        val TIME_FORMAT = SimpleDateFormat("hh:mm", Locale.getDefault())
+        val TIME_FORMAT = SimpleDateFormat("hh:mm a", Locale.getDefault())
     }
 
     private val dayRecords: MutableList<DayRecord> = mutableListOf()
@@ -55,14 +54,13 @@ class HoursAdapter : RecyclerView.Adapter<HoursAdapter.ViewHolder>() {
             Log.d(APP_LOGTAG, "update record: $dayRecord")
 
             with (dayRecord) {
-                hoursTitle.text = TITLE_DATE_FORMAT.format(entrance.format(DateTimeFormatter.ISO_LOCAL_DATE))
+                hoursTitle.text = TITLE_DATE_FORMAT.format(entrance.time)
                 timeStart.text = TIME_FORMAT.format(entrance.time)
                 timeEnd.text = TIME_FORMAT.format(exit.time)
-                duration.text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    ChronoUnit.HOURS.between(entrance.time, exit.time).toString()
-                } else {
-                    ""
-                }
+                val difference = Math.round((exit.time - entrance.time).toDouble() / (1000 * 60 * 60))
+                val durationText = "$difference h"
+                duration.text = durationText
+
             }
         }
     }

@@ -42,7 +42,7 @@
         </activity>
 
         <service
-            android:name=".hours.geofence.GeofenceReciever"
+            android:name=".hours.geofence.GeofenceEventsReciever"
             android:exported="false" />
 
         <provider

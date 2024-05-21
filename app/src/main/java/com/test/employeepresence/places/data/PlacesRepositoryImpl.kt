@@ -2,6 +2,7 @@ package com.test.employeepresence.places.data
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.location.Address
 import android.location.Geocoder
 import android.util.Log
 import androidx.annotation.RequiresPermission
@@ -59,7 +60,11 @@ class PlacesRepositoryImpl @Inject constructor(
     @SuppressLint("MissingPermission")
     override fun addWorkingPlace(latitude: Double, longitude: Double) {
         repositoryScope.launch {
-            val address = geocoder.getFromLocation(latitude, longitude, 1)
+            val address: List<Address>? = try {
+                geocoder.getFromLocation(latitude, longitude, 1)
+            } catch (_: Exception) {
+                null
+            }
             val addressLine = address?.get(0)?.getAddressLine(0)
             savePlace(
                 WorkingPlace(

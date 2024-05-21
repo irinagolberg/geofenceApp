@@ -10,7 +10,7 @@ import androidx.room.Transaction
 @Dao
 interface HoursDao {
 
-    @Query("SELECT * FROM hours WHERE placeId = :placeIdKey ORDER BY timestamp ASC")
+    @Query("SELECT * FROM hours WHERE placeId = :placeIdKey ORDER BY timestamp DESC")
     suspend fun getHours(placeIdKey: String): List<HoursEntity>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertHourRecord(record: HoursEntity)

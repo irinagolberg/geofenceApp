@@ -12,13 +12,15 @@ object LocationPermissionChecker {
         get() {
             val permissions = mutableListOf<String>()
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                permissions.add(Manifest.permission.POST_NOTIFICATIONS)
+            }
             permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 permissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
             }
 
             permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
-            permissions.add(Manifest.permission.POST_NOTIFICATIONS)
 
             return permissions.toTypedArray()
     }

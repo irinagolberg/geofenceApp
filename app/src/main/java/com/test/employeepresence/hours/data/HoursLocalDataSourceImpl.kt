@@ -17,7 +17,6 @@ class HoursLocalDataSourceImpl @Inject constructor(private val hoursDao: HoursDa
             inside = record.type == HoursRecordType.ENTER,
             placeId = record.place.toPlaceIdKey()
         )
-        Log.d(APP_LOGTAG, "ds saveHours ${record.date} $entity")
         hoursDao.insertHourRecord(entity)
         return entity.id
     }
