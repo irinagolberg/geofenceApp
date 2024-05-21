@@ -14,7 +14,6 @@ import com.test.employeepresence.utils.APP_LOGTAG
 import com.test.employeepresence.utils.GEOFENCE_RADIUS_IN_METERS
 import com.test.employeepresence.utils.GEOFENCE_ID
 import com.test.employeepresence.utils.GEOFENCE_PLACE_EXTRA
-import com.test.employeepresence.utils.GEOFENCE_REQUEST_CODE
 import com.test.employeepresence.utils.LOITERING_DELAY
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope

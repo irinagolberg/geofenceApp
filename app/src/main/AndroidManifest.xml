@@ -29,7 +29,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
+            android:value="AIzaSyAi2qWtm4mr7Axg48gTXvjhje9jzC6Fah4" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -44,11 +44,5 @@
         <service
             android:name=".hours.geofence.GeofenceEventsReciever"
             android:exported="false" />
-
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            tools:node="remove">
-        </provider>
     </application>
 </manifest>

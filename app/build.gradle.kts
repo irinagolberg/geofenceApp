@@ -109,16 +109,6 @@ dependencies {
     // AR core dependency
     implementation("com.google.ar:core:1.29.0")
 
-    // Hamcrest for assertions
-    testImplementation("org.hamcrest:hamcrest-all:1.3")
-
-    // Robolectric for unit testing
-    testImplementation("org.robolectric:robolectric:4.3.1")
-
-    // Truth library for assertions
-    testImplementation("com.google.truth:truth:1.0.1")
-    androidTestImplementation("com.google.truth:truth:1.0.1")
-
 }
 
 kapt {

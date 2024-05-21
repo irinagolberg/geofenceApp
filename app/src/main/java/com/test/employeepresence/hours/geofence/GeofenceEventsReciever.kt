@@ -26,7 +26,7 @@ class GeofenceEventsReciever : LifecycleService() {
     lateinit var notificationHelper: NotificationHelper
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        super.onStartCommand(intent, flags, startId)
+        val result = super.onStartCommand(intent, flags, startId)
 
         // If intent has the extra to stop the service
         if (intent?.getBooleanExtra(EXTRA_STOP_SERVICE, false) == true) {
@@ -73,7 +73,7 @@ class GeofenceEventsReciever : LifecycleService() {
                 Log.e(APP_LOGTAG, "Invalid transition type $geofenceTransition")
             }
         }
-        return START_STICKY
+        return result
     }
 
     private fun sendNotification(placeName: String, transitionType: Int) {
