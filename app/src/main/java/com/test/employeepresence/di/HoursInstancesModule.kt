@@ -31,9 +31,8 @@ object HoursInstancesModule {
 
     @Provides
     fun provideHoursInteractor(
-        placesRepo: PlacesRepository,
         hoursRepo: HoursRepository
     ): HoursInteractor {
-        return HoursInteractor(placesRepository = placesRepo, hoursRepository = hoursRepo)
+        return HoursInteractor(hoursRepository = hoursRepo)
     }
 }

@@ -15,6 +15,7 @@ import com.test.employeepresence.utils.APP_LOGTAG
 import com.test.employeepresence.utils.GEOFENCE_RADIUS_IN_METERS
 import com.test.employeepresence.utils.GEOFENCE_ID
 import com.test.employeepresence.utils.GEOFENCE_REQUEST_CODE
+import com.test.employeepresence.utils.LOITERING_DELAY
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +44,7 @@ class GeofenceHelper @Inject constructor(
             .setRequestId(GEOFENCE_ID)
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
             .setExpirationDuration(Geofence.NEVER_EXPIRE)
-            .setLoiteringDelay(5000)
+            .setLoiteringDelay(LOITERING_DELAY)
             .build()
 
         val geofencingRequest = GeofencingRequest.Builder().apply {

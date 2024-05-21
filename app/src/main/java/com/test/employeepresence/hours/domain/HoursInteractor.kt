@@ -9,38 +9,41 @@ import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
 
-class HoursInteractor @Inject constructor(private val placesRepository: PlacesRepository, private val hoursRepository: HoursRepository) {
+class HoursInteractor @Inject constructor(private val hoursRepository: HoursRepository) {
     suspend fun getHours(): List<DayRecord> {
         val dayRecords = mutableListOf<DayRecord>()
         val hours = hoursRepository.getHours()
-        val entrances = hours.filter { it.type == HoursRecordType.ENTER }
-        val exits = hours.filter { it.type == HoursRecordType.EXIT }.associate { getDayKey(it.date) to it.date }
         Log.d(APP_LOGTAG, "getHours hours: $hours")
-        Log.d(APP_LOGTAG, "getHours entrance: $entrances")
-        Log.d(APP_LOGTAG, "getHours exits: $exits")
-        entrances.forEach { entrance ->
-            val key = getDayKey(entrance.date)
-            exits[key]?.let { exit ->
-                dayRecords.add(DayRecord(entrance = entrance.date, exit = exit))
+        var entrance: HoursRecord? = null
+        var exit: HoursRecord? = null
+        hours.forEach { record ->
+            when (record.type) {
+                HoursRecordType.ENTER -> {
+                    entrance = record
+                }
+                HoursRecordType.EXIT -> {
+                    exit = record
+                }
+            }
+            entrance?.let { entranceChecked ->
+                exit?.let { exitChecked ->
+                    if (entranceChecked.date.before(exitChecked.date)) {
+                        dayRecords.add(
+                            DayRecord(
+                                entrance = entranceChecked.date,
+                                exit = exitChecked.date
+                            )
+                        )
+                        entrance = null
+                        exit = null
+                    }
+                }
             }
         }
         return dayRecords.toList()
     }
-    private fun getDayKey(date: Date): String {
-        /*val calendar = Calendar.getInstance()
-        calendar.timeInMillis = date.time
-        val key = "${calendar.get(Calendar.YEAR)}:${calendar.get(Calendar.DAY_OF_MONTH)}:${calendar.get(Calendar.MONTH)}"
-        Log.d(APP_LOGTAG, "getDayKey: $key")*/
-        return SimpleDateFormat("dd.MM.yyyy").format(date)
-    }
-    suspend fun saveHours(latitude: Double?, longitude: Double?, entering: Boolean) {
-        val record = HoursRecord(
-            date = Calendar.getInstance().time, type =
-            when (entering) {
-                true -> HoursRecordType.ENTER
-                false -> HoursRecordType.EXIT
-            }
-        )
-        hoursRepository.saveHours(record)
+
+    suspend fun saveHours(latitude: Double, longitude: Double, entering: Boolean) {
+        hoursRepository.saveHours(latitude, longitude, entering)
     }
 }

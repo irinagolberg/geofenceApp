@@ -51,8 +51,15 @@ class GeoFenceCreatorService: LifecycleService() {
             val triggeringGeofences = geofencingEvent.triggeringGeofences
 
             Log.i(APP_LOGTAG, "Geofence triggered: $triggeringGeofences")
-            lifecycleScope.launch {
-                interactor.saveHours(geofencingEvent.triggeringLocation?.latitude, geofencingEvent.triggeringLocation?.longitude, geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER)
+            val latitude = geofencingEvent.triggeringLocation?.latitude
+            val longitude = geofencingEvent.triggeringLocation?.longitude
+            if (latitude != null && longitude != null) {
+                lifecycleScope.launch {
+                    interactor.saveHours(
+                        latitude, longitude,
+                        geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER
+                    )
+                }
             }
         } else {
             // Log the error.

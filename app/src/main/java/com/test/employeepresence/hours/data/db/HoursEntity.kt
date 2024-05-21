@@ -10,5 +10,5 @@ data class HoursEntity(
     val id: Long = 0,
     val timestamp: Long,
     val inside: Boolean,
-    val placeId: Long?
+    val placeId: String
 )

@@ -9,8 +9,8 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.Tasks
 import com.test.employeepresence.hours.data.GeofenceHelper
-import com.test.employeepresence.places.domain.WorkingPlace
 import com.test.employeepresence.places.domain.PlacesRepository
+import com.test.employeepresence.places.domain.WorkingPlace
 import com.test.employeepresence.utils.APP_LOGTAG
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class PlacesRepositoryImpl @Inject constructor(
     private val geocoder: Geocoder,
@@ -62,7 +61,13 @@ class PlacesRepositoryImpl @Inject constructor(
         repositoryScope.launch {
             val address = geocoder.getFromLocation(latitude, longitude, 1)
             val addressLine = address?.get(0)?.getAddressLine(0)
-            savePlace(WorkingPlace(latitude = latitude, longitude = longitude, address = addressLine))
+            savePlace(
+                WorkingPlace(
+                    latitude = latitude,
+                    longitude = longitude,
+                    address = addressLine
+                )
+            )
             Log.d(APP_LOGTAG, "addWorkingPlace $address")
         }
     }
@@ -71,6 +76,7 @@ class PlacesRepositoryImpl @Inject constructor(
         geofenceHelper.setupGeofence(place)
         placesDataSource.savePlace(place)
         _placeFlow.emit(place)
+
     }
 
     override fun getPlacesFlow(): Flow<WorkingPlace?> {

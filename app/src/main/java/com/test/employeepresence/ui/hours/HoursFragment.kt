@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.test.employeepresence.databinding.FragmentHoursBinding
+import com.test.employeepresence.hours.domain.DayRecord
 import com.test.employeepresence.ui.settings.SettingsViewModel
 import com.test.employeepresence.utils.APP_LOGTAG
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,12 +54,22 @@ class HoursFragment : Fragment() {
         }
 
         viewModel.hours.observe(viewLifecycleOwner) {
-            Log.d(APP_LOGTAG, "Hours: $it")
-            hoursAdapter.updateHours(it)
+            updateUI(it)
         }
 
     }
 
+    private fun updateUI(records: List<DayRecord>?) {
+        if (records.isNullOrEmpty()) {
+            binding.noHours.visibility = View.VISIBLE
+            binding.recyclerViewHours.visibility = View.GONE
+        } else {
+            binding.noHours.visibility = View.GONE
+            binding.recyclerViewHours.visibility = View.VISIBLE
+            hoursAdapter.updateHours(records)
+        }
+
+    }
     override fun onStart() {
         super.onStart()
         viewModel.retrieveHours()

@@ -4,12 +4,14 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
 import com.test.employeepresence.hours.domain.HoursRecord
 import com.test.employeepresence.hours.domain.HoursRecordType
 import com.test.employeepresence.utils.APP_LOGTAG
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class GeofenceBroadcastReceiver : BroadcastReceiver() {
@@ -39,13 +41,16 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             val triggeringGeofences = geofencingEvent.triggeringGeofences
 
             Log.i(APP_LOGTAG, "Geofence triggered: $triggeringGeofences")
-            val record = HoursRecord(date = Calendar.getInstance().time, type =
-            when (geofenceTransition) {
-                Geofence.GEOFENCE_TRANSITION_ENTER -> HoursRecordType.ENTER
-                else -> HoursRecordType.EXIT
-            })
-            Log.d(APP_LOGTAG, "Geofence necessary to save $record")
-           // interactor.saveHours(record)
+            val latitude = geofencingEvent.triggeringLocation?.latitude
+            val longitude = geofencingEvent.triggeringLocation?.longitude
+            if (latitude != null && longitude != null) {
+                /*lifecycleScope.launch {
+                    interactor.saveHours(
+                        latitude, longitude,
+                        geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER
+                    )
+                }*/
+            }
         } else {
             // Log the error.
             Log.e(APP_LOGTAG, "Invalid transition type $geofenceTransition")
