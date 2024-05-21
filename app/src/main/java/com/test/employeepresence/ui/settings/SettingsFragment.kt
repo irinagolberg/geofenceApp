@@ -22,6 +22,7 @@ import com.test.employeepresence.R
 import com.test.employeepresence.databinding.FragmentSettingsBinding
 import com.test.employeepresence.places.domain.WorkingPlace
 import com.test.employeepresence.utils.APP_LOGTAG
+import com.test.employeepresence.utils.DEFAULT_LOCATION
 import com.test.employeepresence.utils.GEOFENCE_RADIUS_IN_METERS
 import com.test.employeepresence.utils.LocationPermissionChecker
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,7 +31,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class SettingsFragment : Fragment(), OnMapReadyCallback {
     companion object {
         private const val DEFAULT_ZOOM = 17
-        private val DEFAULT_LOCATION = LatLng(32.0730747, 34.7926483)
     }
     private var marker: Marker? = null
     private var geoFenceZone: Circle? = null

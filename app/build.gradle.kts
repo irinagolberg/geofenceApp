@@ -18,7 +18,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.test.employeepresence.HiltTestRunner"
     }
 
     buildTypes {
@@ -78,13 +78,46 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation("androidx.hilt:hilt-work:1.2.0")
 
+    // JUnit dependencies
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
+
+    // Espresso dependencies for UI testing
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    // Room testing dependencies
+    testImplementation("androidx.room:room-testing:2.3.0")
+
+    // AndroidX Test - Instrumentation testing
+    androidTestImplementation("androidx.test:core:1.3.0")
+    androidTestImplementation("androidx.test:runner:1.3.0")
+    androidTestImplementation("androidx.test:rules:1.3.0")
+
+    // Coroutine test dependency
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:3.9.0")
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.2.1") // Update to the latest version if necessary
+
+    // Arch core testing dependency
+    androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("androidx.arch.core:core-testing:2.1.0")
+
+    // Hilt testing dependencies
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.40.5")
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.40.5")
+    kaptTest("com.google.dagger:hilt-android-compiler:2.44")
+
+    // AR core dependency
+    implementation("com.google.ar:core:1.29.0")
+
+    // Hamcrest for assertions
+    testImplementation("org.hamcrest:hamcrest-all:1.3")
+
+    // Robolectric for unit testing
+    testImplementation("org.robolectric:robolectric:4.3.1")
+
+    // Truth library for assertions
+    testImplementation("com.google.truth:truth:1.0.1")
+    androidTestImplementation("com.google.truth:truth:1.0.1")
 
 }
 

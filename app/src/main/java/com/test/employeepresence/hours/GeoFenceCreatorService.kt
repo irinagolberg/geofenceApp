@@ -15,19 +15,17 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class GeoFenceCreatorService: LifecycleService() {
-    companion object {
-        const val EXTRA_STOP_SERVICE = "stop"
-    }
-
     @Inject lateinit var interactor: HoursInteractor
-    /*private val geofencePendingIntent: PendingIntent by lazy {
-        val intent = Intent(this, GeofenceBroadcastReceiver::class.java)
-        PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-    }*/
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val result = super.onStartCommand(intent, flags, startId)
         Log.d(APP_LOGTAG, "Geofence service intent: $intent")
+
+        // If intent has the extra to stop the service
+        if (intent?.getBooleanExtra(EXTRA_STOP_SERVICE, false) == true) {
+            stopSelf()
+        }
+
         val geofencingEvent = intent?.let { GeofencingEvent.fromIntent(intent) }
         if (geofencingEvent == null || geofencingEvent.hasError()) {
             geofencingEvent?.errorCode?.let {
@@ -66,5 +64,9 @@ class GeoFenceCreatorService: LifecycleService() {
             Log.e(APP_LOGTAG, "Invalid transition type $geofenceTransition")
         }
         return result
+    }
+
+    companion object {
+        const val EXTRA_STOP_SERVICE = "EXTRA_STOP_SERVICE"
     }
 }

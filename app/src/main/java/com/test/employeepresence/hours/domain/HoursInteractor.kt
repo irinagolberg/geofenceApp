@@ -1,12 +1,7 @@
 package com.test.employeepresence.hours.domain
 
 import android.util.Log
-import com.test.employeepresence.places.domain.PlacesRepository
-import com.test.employeepresence.places.domain.WorkingPlace
 import com.test.employeepresence.utils.APP_LOGTAG
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
 import javax.inject.Inject
 
 class HoursInteractor @Inject constructor(private val hoursRepository: HoursRepository) {
